@@ -3,7 +3,7 @@
   "displayName": "Mehdi+",
   "description": "Intègre des custom modes nativement.",
   "version": "0.0.1",
-  "publisher": "your-publisher-id",
+  "publisher": "mehdi-plus",
   "license": "MIT",
   "engines": {
     "vscode": "^1.90.0"
@@ -15,7 +15,7 @@
   "activationEvents": [
     "onCommand:copilotPrompt.ask",
     "onCommand:copilotPrompt.listCopilotCommands",
-    "onCommand:vibeplus.applyMode",
+    "onCommand:vibeplus.applyMode"
     "onCommand:vibeplus.openModeFile",
     "onCommand:vibeplus.recreateModeFile"
   ],
@@ -64,7 +64,11 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "package": "vsce package",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "prepublishOnly": "npm run lint && npm run compile",
+    "release:patch": "npm version patch && npx vsce publish",
+    "release:minor": "npm version minor && npx vsce publish",
+    "release:major": "npm version major && npx vsce publish"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
@@ -79,13 +83,13 @@
     "github.copilot"
   ],
   "keywords": [
-    "copilot",
     "chat",
+    "copilot",
     "custom mode",
-    "vibe",
     "orange",
+    "productivity",
     "security",
-    "productivity"
+    "vibe"
   ],
   "repository": {
     "type": "git",
@@ -95,5 +99,10 @@
     "url": "https://github.com/your-user/your-repo/issues"
   },
   "homepage": "https://github.com/your-user/your-repo#readme",
-  "icon": "images/icon.png"
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#ff6a00",
+    "theme": "dark"
+  },
+  "private": false
 }
