@@ -13,9 +13,10 @@
     "Programming Languages"
   ],
   "activationEvents": [
+    "onStartupFinished",
     "onCommand:copilotPrompt.ask",
     "onCommand:copilotPrompt.listCopilotCommands",
-    "onCommand:vibeplus.applyMode"
+    "onCommand:vibeplus.applyMode",
     "onCommand:vibeplus.openModeFile",
     "onCommand:vibeplus.recreateModeFile"
   ],
