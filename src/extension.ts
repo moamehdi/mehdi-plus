@@ -22,7 +22,7 @@ function getUserPromptsDir(): string {
   // Linux
   return path.join(home, '.config', 'Code', 'User', 'prompts');
 }
-const GLOBAL_CHATMODE_FILE = path.join(getUserPromptsDir(), 'vibe-plus.chatmode.md');
+const GLOBAL_CHATMODE_FILE = path.join(getUserPromptsDir(), 'VIBE+.chatmode.md');
 
 // Contenu système Vibe+ (doit rester aligné avec la source).
 // const VIBE_SYSTEM_PROMPT = `--- ... (supprimé temporairement)`;
