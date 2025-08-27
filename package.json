@@ -2,7 +2,7 @@
   "name": "mehdi-plus",
   "displayName": "Mehdi+",
   "description": "Intègre des custom modes nativement.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "mehdi-plus",
   "license": "MIT",
   "engines": {
