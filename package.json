@@ -2,7 +2,7 @@
   "name": "vibe-plus",
   "displayName": "[OW IT] VIBE+",
   "description": "Crée le custom chat mode global Vibe+ pour GitHub Copilot.",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "publisher": "mehdi-plus",
   "license": "MIT",
   "engines": {
