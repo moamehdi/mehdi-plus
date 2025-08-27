@@ -7,10 +7,7 @@ import * as os from 'os';
 
 const VIBE_PROMPT_FILE_RELATIVE = path.posix.join('.github', 'copilot-instructions.md');
 // Chemins historiques (dans le workspace) - conservés pour rétrocompat éventuelle.
-const VIBE_MODE_DIR = path.posix.join('.github', 'chatmodes');
-const VIBE_MODE_FILE = path.posix.join(VIBE_MODE_DIR, 'vibe-plus.chatmode.md');
-const VIBE_MODE_DIR_COMPAT = path.posix.join('.githhub', 'chatmode'); // variante typo
-const VIBE_MODE_FILE_COMPAT = path.posix.join(VIBE_MODE_DIR_COMPAT, 'vibe-plus.chatmode.md');
+// const VIBE_MODE_FILE et VIBE_MODE_FILE_COMPAT supprimés (plus utilisés)
 
 // Nouveau besoin : création dans le dossier global utilisateur VS Code prompts.
 function getUserPromptsDir(): string {
@@ -78,7 +75,7 @@ async function writeChatModeFile(absFile: string, force: boolean) {
   await fs.writeFile(absFile, VIBE_CHATMODE_FULL_CONTENT, 'utf8');
 }
 
-async function ensureVibeChatMode(workspaceFolder: vscode.WorkspaceFolder | undefined, force = false) {
+async function ensureVibeChatMode(force = false) {
   // Création uniquement du fichier global utilisateur
   try {
     await writeChatModeFile(GLOBAL_CHATMODE_FILE, force);
@@ -89,7 +86,7 @@ async function ensureVibeChatMode(workspaceFolder: vscode.WorkspaceFolder | unde
 
 async function openGlobalChatModeFile() {
   try {
-    await ensureVibeChatMode(vscode.workspace.workspaceFolders?.[0]);
+    await ensureVibeChatMode();
     const doc = await vscode.workspace.openTextDocument(GLOBAL_CHATMODE_FILE);
     await vscode.window.showTextDocument(doc, { preview: false });
   } catch (e:any) {
@@ -109,7 +106,7 @@ async function handleFirstRun(context: vscode.ExtensionContext) {
   const upgraded = !!previousVersion && previousVersion !== currentVersion;
 
   // Assure le fichier global avant de notifier (si cela échoue, on continue quand même).
-  try { await ensureVibeChatMode(vscode.workspace.workspaceFolders?.[0]); } catch {/* ignore */}
+  try { await ensureVibeChatMode(); } catch {/* ignore */}
 
   if (!firstRun && !upgraded) return; // rien à faire
 
@@ -182,7 +179,7 @@ export function activate(context: vscode.ExtensionContext) {
   const applyDisposable = vscode.commands.registerCommand('vibeplus.applyMode', async () => {
     const folder = vscode.workspace.workspaceFolders?.[0];
     await ensureVibeInstructions(folder);
-    await ensureVibeChatMode(folder);
+    await ensureVibeChatMode();
     vscode.window.showInformationMessage('Mode Vibe+ appliqué (instructions présentes dans .github/copilot-instructions.md).');
   });
 
@@ -192,7 +189,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   const recreateModeDisposable = vscode.commands.registerCommand('vibeplus.recreateModeFile', async () => {
-    await ensureVibeChatMode(vscode.workspace.workspaceFolders?.[0], true);
+    await ensureVibeChatMode(true);
     vscode.window.showInformationMessage('Fichier de mode global Vibe+ régénéré.');
   });
 
@@ -202,7 +199,7 @@ export function activate(context: vscode.ExtensionContext) {
   if (cfg.get('vibeplus.autoApplyOnStartup') !== false) {
     const folder = vscode.workspace.workspaceFolders?.[0];
     ensureVibeInstructions(folder);
-    ensureVibeChatMode(folder);
+    ensureVibeChatMode();
   }
   // Lancement du gestionnaire de première installation / mise à jour (non bloquant).
   handleFirstRun(context).catch(err => console.warn('handleFirstRun error', err));
