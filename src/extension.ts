@@ -79,30 +79,11 @@ async function writeChatModeFile(absFile: string, force: boolean) {
 }
 
 async function ensureVibeChatMode(workspaceFolder: vscode.WorkspaceFolder | undefined, force = false) {
-  // 1. Création fichier global (nouveau besoin prioritaire)
+  // Création uniquement du fichier global utilisateur
   try {
     await writeChatModeFile(GLOBAL_CHATMODE_FILE, force);
   } catch (e: any) {
     vscode.window.showErrorMessage('Erreur création chat mode global Vibe+: ' + e.message);
-  }
-  // 2. Ancien emplacement dans le workspace (optionnel pour rétrocompat)
-  if (workspaceFolder) {
-    const root = workspaceFolder.uri.fsPath;
-    const primary = path.join(root, VIBE_MODE_FILE);
-    const compat = path.join(root, VIBE_MODE_FILE_COMPAT);
-    try {
-      await writeChatModeFile(primary, false); // ne force pas pour éviter sur‑écriture locale
-      let compatNeeded = force;
-      if (!compatNeeded) {
-        try { await fs.access(path.dirname(compat)); compatNeeded = true; } catch { /* ignore */ }
-      }
-      if (compatNeeded) {
-        await writeChatModeFile(compat, false);
-      }
-    } catch (e:any) {
-      // On journalise silencieusement pour ne pas spammer si workspace en lecture seule.
-      console.warn('Compat chatmode non écrit:', e.message);
-    }
   }
 }
 
