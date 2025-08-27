@@ -2,11 +2,15 @@
   "name": "vibe-plus",
   "displayName": "[OW IT] VIBE+",
   "description": "Crée le custom chat mode global Vibe+ pour GitHub Copilot.",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "publisher": "mehdi-plus",
   "license": "MIT",
-  "engines": { "vscode": "^1.90.0" },
-  "categories": ["Other"],
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [
     "onStartupFinished",
     "onCommand:vibeplus.openModeFile",
@@ -47,12 +51,28 @@
     "typescript": "^5.4.0",
     "vsce": "^2.15.0"
   },
-  "extensionDependencies": ["github.copilot"],
-  "keywords": ["copilot", "chat", "mode", "vibe", "orange"],
+  "extensionDependencies": [
+    "github.copilot"
+  ],
+  "keywords": [
+    "copilot",
+    "chat",
+    "mode",
+    "vibe",
+    "orange"
+  ],
   "icon": "images/icon.png",
-  "galleryBanner": { "color": "#ff6a00", "theme": "dark" },
-  "repository": { "type": "git", "url": "https://github.com/your-user/your-repo.git" },
-  "bugs": { "url": "https://github.com/your-user/your-repo/issues" },
+  "galleryBanner": {
+    "color": "#ff6a00",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-user/your-repo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-user/your-repo/issues"
+  },
   "homepage": "https://github.com/your-user/your-repo#readme",
   "private": false
 }
