@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0
+- Ajout du mode global **RETRODOC+** pour orchestrer la rétro‑documentation (questions initiales, génération table des matières, check, index, rédaction section par section, reprise, vérification finale).
+- Commands RETRODOC+ (apply/open/recreate) ajoutées.
+- Unification des modes globaux (VIBE+.chatmode.md & RETRODOC+.chatmode.md) dans `User/prompts`.
+- Nettoyage README (suppression instructions de dev locales, clarification usages).
+- Mise à jour description extension & licence (attribution Orange).
+
 ## 0.0.3
 - Création du fichier global de chat mode `vibe-plus.chatmode.md` dans le dossier utilisateur VS Code (`User/prompts`) au lieu de seulement le workspace.
 - Rétrocompat : génération toujours tentée dans l'ancien emplacement `.github/chatmodes/` (et variante typo) sans écraser si présent.
