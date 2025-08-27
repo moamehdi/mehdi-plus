@@ -1,0 +1,109 @@
+{
+  "name": "vibe-plus",
+  "displayName": "[OW IT] VIBE+",
+  "description": "Intègre des custom modes nativement.",
+  "version": "1.0.4",
+  "publisher": "mehdi-plus",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other",
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:copilotPrompt.ask",
+    "onCommand:copilotPrompt.listCopilotCommands",
+    "onCommand:vibeplus.applyMode",
+    "onCommand:vibeplus.openModeFile",
+    "onCommand:vibeplus.recreateModeFile"
+  ],
+  "main": "dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "copilotPrompt.ask",
+        "title": "Copilot: Envoyer un prompt rapide",
+        "category": "Copilot"
+      },
+      {
+        "command": "copilotPrompt.listCopilotCommands",
+        "title": "Copilot: Lister les commandes internes disponibles",
+        "category": "Copilot"
+      },
+      {
+        "command": "vibeplus.applyMode",
+        "title": "Vibe+ : Activer le mode Copilot",
+        "category": "Vibe+"
+      },
+      {
+        "command": "vibeplus.openModeFile",
+        "title": "Vibe+ : Ouvrir le fichier de mode",
+        "category": "Vibe+"
+      },
+      {
+        "command": "vibeplus.recreateModeFile",
+        "title": "Vibe+ : Régénérer le fichier de mode",
+        "category": "Vibe+"
+      }
+    ],
+    "configuration": {
+      "title": "Vibe+ Copilot Mode",
+      "properties": {
+        "vibeplus.autoApplyOnStartup": {
+          "type": "boolean",
+          "default": true,
+          "description": "Appliquer automatiquement la vérification du fichier .github/copilot-instructions.md à l'activation."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "lint": "eslint . --ext .ts",
+    "prepublishOnly": "npm run lint && npm run compile",
+    "release:patch": "npm version patch && npx vsce publish",
+    "release:minor": "npm version minor && npx vsce publish",
+    "release:major": "npm version major && npx vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.0",
+    "vsce": "^2.15.0"
+  },
+  "extensionDependencies": [
+    "github.copilot"
+  ],
+  "keywords": [
+    "chat",
+    "copilot",
+    "custom mode",
+    "orange",
+    "productivity",
+    "security",
+    "vibe"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-user/your-repo.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-user/your-repo/issues"
+  },
+  "homepage": "https://github.com/your-user/your-repo#readme",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#ff6a00",
+    "theme": "dark"
+  },
+  "private": false
+}

@@ -1,43 +1,20 @@
 {
   "name": "vibe-plus",
   "displayName": "[OW IT] VIBE+",
-  "description": "Intègre des custom modes nativement.",
-  "version": "1.0.4",
+  "description": "Crée le custom chat mode global Vibe+ pour GitHub Copilot.",
+  "version": "1.0.5",
   "publisher": "mehdi-plus",
   "license": "MIT",
-  "engines": {
-    "vscode": "^1.90.0"
-  },
-  "categories": [
-    "Other",
-    "Programming Languages"
-  ],
+  "engines": { "vscode": "^1.90.0" },
+  "categories": ["Other"],
   "activationEvents": [
     "onStartupFinished",
-    "onCommand:copilotPrompt.ask",
-    "onCommand:copilotPrompt.listCopilotCommands",
-    "onCommand:vibeplus.applyMode",
     "onCommand:vibeplus.openModeFile",
     "onCommand:vibeplus.recreateModeFile"
   ],
   "main": "dist/extension.js",
   "contributes": {
     "commands": [
-      {
-        "command": "copilotPrompt.ask",
-        "title": "Copilot: Envoyer un prompt rapide",
-        "category": "Copilot"
-      },
-      {
-        "command": "copilotPrompt.listCopilotCommands",
-        "title": "Copilot: Lister les commandes internes disponibles",
-        "category": "Copilot"
-      },
-      {
-        "command": "vibeplus.applyMode",
-        "title": "Vibe+ : Activer le mode Copilot",
-        "category": "Vibe+"
-      },
       {
         "command": "vibeplus.openModeFile",
         "title": "Vibe+ : Ouvrir le fichier de mode",
@@ -48,17 +25,7 @@
         "title": "Vibe+ : Régénérer le fichier de mode",
         "category": "Vibe+"
       }
-    ],
-    "configuration": {
-      "title": "Vibe+ Copilot Mode",
-      "properties": {
-        "vibeplus.autoApplyOnStartup": {
-          "type": "boolean",
-          "default": true,
-          "description": "Appliquer automatiquement la vérification du fichier .github/copilot-instructions.md à l'activation."
-        }
-      }
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -80,30 +47,12 @@
     "typescript": "^5.4.0",
     "vsce": "^2.15.0"
   },
-  "extensionDependencies": [
-    "github.copilot"
-  ],
-  "keywords": [
-    "chat",
-    "copilot",
-    "custom mode",
-    "orange",
-    "productivity",
-    "security",
-    "vibe"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/your-user/your-repo.git"
-  },
-  "bugs": {
-    "url": "https://github.com/your-user/your-repo/issues"
-  },
-  "homepage": "https://github.com/your-user/your-repo#readme",
+  "extensionDependencies": ["github.copilot"],
+  "keywords": ["copilot", "chat", "mode", "vibe", "orange"],
   "icon": "images/icon.png",
-  "galleryBanner": {
-    "color": "#ff6a00",
-    "theme": "dark"
-  },
+  "galleryBanner": { "color": "#ff6a00", "theme": "dark" },
+  "repository": { "type": "git", "url": "https://github.com/your-user/your-repo.git" },
+  "bugs": { "url": "https://github.com/your-user/your-repo/issues" },
+  "homepage": "https://github.com/your-user/your-repo#readme",
   "private": false
 }
