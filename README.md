@@ -1,55 +1,70 @@
 # Vibe+ Copilot Mode / Prompt Helper
 
-Extension VS Code pour :
-1. Fournir un mode personnalisé "Vibe+" à GitHub Copilot via le fichier `.github/copilot-instructions.md`.
-2. Accélérer (sans garantie) l'envoi d'un prompt vers Copilot Chat via des commandes internes.
+Extension VS Code qui :
+1. Fournit un mode IA personnalisé "Vibe+" à GitHub Copilot (priorités sécurité, maintenabilité, performance raisonnée, élégance).
+2. Génère / maintient un fichier global de chat mode (`vibe-plus.chatmode.md`) placé dans le dossier utilisateur VS Code (`User/prompts`).
+3. Propose des commandes utilitaires pour envoyer rapidement des prompts à Copilot Chat (usage interne des commandes non stables `github.copilot.*`).
 
-## Limites
-- Pas d'API publique stable pour piloter Copilot Chat.
-- Les commandes internes peuvent changer.
+## Fonctionnement
+À l'activation :
+- Vérifie / ré-initialise le fichier `.github/copilot-instructions.md` si corrompu (présence du marqueur `<system>`).
+- Crée le fichier global `vibe-plus.chatmode.md` (si absent).
+- Laisse, pour rétrocompat, un fichier dans le workspace (`.github/chatmodes/vibe-plus.chatmode.md`) sans écraser les modifications locales existantes.
+- Sur première installation ou mise à jour : affiche une notification avec bouton Reload pour recharger la fenêtre (recommandé afin que Copilot rescane les modes).
 
 ## Commandes
-- Copilot: Envoyer un prompt rapide (`copilotPrompt.ask`)
-- Copilot: Lister les commandes internes disponibles (`copilotPrompt.listCopilotCommands`)
-- Vibe+ : Activer le mode Copilot (`vibeplus.applyMode`) – (re)valide la présence du fichier `.github/copilot-instructions.md`.
+| Commande | Effet |
+|----------|-------|
+| `copilotPrompt.ask` | Saisie rapide d’un prompt et tentative d’envoi direct à Copilot Chat. |
+| `copilotPrompt.listCopilotCommands` | Liste les commandes internes Copilot détectées. |
+| `vibeplus.applyMode` | Vérifie / réapplique instructions + chat mode. |
+| `vibeplus.openModeFile` | Ouvre le fichier global `vibe-plus.chatmode.md`. |
+| `vibeplus.recreateModeFile` | Régénère (force) le chat mode global. |
 
-## Installation (local dev)
+## Installation (développement local)
 ```bash
 npm install
 npm run compile
 ```
-F5 pour lancer.
+F5 pour lancer la session Extension Development Host.
 
-## Installation depuis Marketplace (après publication)
-1. Ouvrir l'onglet Extensions puis rechercher "Mehdi+".
-2. Installer (GitHub Copilot sera requis automatiquement).
-3. Ouvrir un workspace => le fichier `/.github/chatmodes/vibeplus.chatmode.md` est créé.
-4. Ouvrir Copilot Chat (Ctrl+Alt+I) et choisir le mode `vibeplus`.
+## Installation depuis Marketplace
+1. Rechercher "Mehdi+" dans Extensions.
+2. Installer (dépendance: GitHub Copilot).
+3. Une notification peut proposer Reload (recommandé au premier démarrage / upgrade).
+4. Ouvrir Copilot Chat, sélectionner le mode `vibe-plus` si listé.
 
 ### Via fichier VSIX
-```
-code --install-extension mehdi-plus-0.0.1.vsix
+```bash
+code --install-extension mehdi-plus-<version>.vsix
 ```
 
 ## Mode Vibe+
-Le fichier `.github/copilot-instructions.md` contient le prompt système Vibe+ (rôle, priorités, workflow). Vous pouvez l'adapter si besoin. Si le contenu est supprimé/corrompu, exécutez la commande `Vibe+ : Activer le mode Copilot`.
+Le contenu système (rôle, workflow, principes) est embarqué dans le fichier global. Modifier avec prudence : une régénération forcée via `vibeplus.recreateModeFile` réécrira le contenu standard.
 
-### Notes
-Les commandes internes `github.copilot.*` ne sont pas stables : l'envoi direct peut échouer ou changer. Le custom chat mode repose sur la présence du fichier `.chatmode.md` (preview VS Code >=1.101).
+## Limitations
+- Pas d’API officielle pour piloter Copilot → les commandes internes peuvent cesser de fonctionner.
+- Le rechargement est recommandé pour que Copilot prenne immédiatement en compte un nouveau chat mode.
 
-### CLI
-Lancer directement une session chat avec le mode :
+## CLI (expérimental)
+```bash
+code chat -m vibe-plus "Explique la structure du projet"
 ```
-code chat -m vibeplus "Explique la structure du projet"
-```
+(Le nom effectif peut dépendre de l’indexation interne des modes.)
 
-## Idées futures
+## Dépannage
+- Chat mode introuvable : recharger la fenêtre (Ctrl+Shift+P → Reload Window) et vérifier que le fichier global existe dans `User/prompts`.
+- Envoi prompt échoué : la commande interne Copilot peut avoir changé; ouvrir le panneau et coller manuellement.
+- Fichier écrasé : utiliser le contrôle de version local ou désactiver la régénération automatique (`vibeplus.autoApplyOnStartup = false`).
+
 ## Release
-Voir `RELEASE.md` pour le processus détaillé (mise à jour publisher, version, packaging et publication Marketplace).
+Voir `RELEASE.md` pour le flux complet (versioning, publication). Changelog dans `CHANGELOG.md`.
+
+## Roadmap / Idées futures
 - Historique local des prompts
-- Injection contextuelle (sélection, tests, erreurs)
-- Interface graphique dédiée
-- Validation d'intégrité du prompt et diff automatique
+- UI graphique pour sélection de modes
+- Analyse automatique du repo et suggestions de tests
+- Diff/merge intelligent des instructions
 
 ## Licence
 MIT

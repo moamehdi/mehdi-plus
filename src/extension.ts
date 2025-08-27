@@ -116,6 +116,35 @@ async function openGlobalChatModeFile() {
   }
 }
 
+// Gestion première exécution / mise à jour : propose un reload facultatif.
+async function handleFirstRun(context: vscode.ExtensionContext) {
+  const VERSION_KEY = 'vibeplus.version';
+  const FIRST_KEY = 'vibeplus.firstRunDone';
+  const extIdGuess = 'mehdi-plus.mehdi-plus'; // id = publisher.name
+  const ext = vscode.extensions.getExtension(extIdGuess);
+  const currentVersion: string = (ext?.packageJSON?.version as string) || '0.0.0';
+  const previousVersion = context.globalState.get<string>(VERSION_KEY);
+  const firstRun = !context.globalState.get<boolean>(FIRST_KEY);
+  const upgraded = !!previousVersion && previousVersion !== currentVersion;
+
+  // Assure le fichier global avant de notifier (si cela échoue, on continue quand même).
+  try { await ensureVibeChatMode(vscode.workspace.workspaceFolders?.[0]); } catch {/* ignore */}
+
+  if (!firstRun && !upgraded) return; // rien à faire
+
+  await context.globalState.update(FIRST_KEY, true);
+  await context.globalState.update(VERSION_KEY, currentVersion);
+
+  const action = 'Reload';
+  const message = firstRun
+    ? 'Vibe+ installé. Recharge la fenêtre pour activer entièrement le mode global.'
+    : `Vibe+ mis à jour (${previousVersion} → ${currentVersion}). Reload recommandé.`;
+  const pick = await vscode.window.showInformationMessage(message, action);
+  if (pick === action) {
+    await vscode.commands.executeCommand('workbench.action.reloadWindow');
+  }
+}
+
 async function sendPromptToCopilot(prompt: string) {
   const allCommands = await vscode.commands.getCommands(true);
   const candidateChatSend = [
@@ -194,6 +223,8 @@ export function activate(context: vscode.ExtensionContext) {
     ensureVibeInstructions(folder);
     ensureVibeChatMode(folder);
   }
+  // Lancement du gestionnaire de première installation / mise à jour (non bloquant).
+  handleFirstRun(context).catch(err => console.warn('handleFirstRun error', err));
   console.log('Vibe+ Copilot helper activé');
 }
 
