@@ -2,7 +2,7 @@
   "name": "vibe-plus",
   "displayName": "[OW IT] VIBE+",
   "description": "Intègre des custom modes nativement.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "publisher": "mehdi-plus",
   "license": "MIT",
   "engines": {
