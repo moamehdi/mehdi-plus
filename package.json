@@ -2,7 +2,7 @@
   "name": "vibe-plus",
   "displayName": "[OW IT] VIBE+",
   "description": "Crée les custom chat modes globaux VIBE+ (assistant dev sécurisé) et RETRODOC+ (rétro‑documentation) pour GitHub Copilot.",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "publisher": "OWIT",
   "license": "MIT",
   "engines": {
