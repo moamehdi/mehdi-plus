@@ -11,19 +11,32 @@ import * as os from 'os';
 // const VIBE_MODE_FILE et VIBE_MODE_FILE_COMPAT supprimés (plus utilisés)
 
 // Nouveau besoin : création dans le dossier global utilisateur VS Code prompts.
-function getUserPromptsDir(): string {
+function getUserPromptsDirs(): string[] {
   const home = os.homedir();
+  let stable: string;
+  let insiders: string;
   if (process.platform === 'win32') {
-    return path.join(home, 'AppData', 'Roaming', 'Code', 'User', 'prompts');
+    stable = path.join(home, 'AppData', 'Roaming', 'Code', 'User', 'prompts');
+    insiders = path.join(home, 'AppData', 'Roaming', 'Code - Insiders', 'User', 'prompts');
+  } else if (process.platform === 'darwin') {
+    stable = path.join(home, 'Library', 'Application Support', 'Code', 'User', 'prompts');
+    insiders = path.join(home, 'Library', 'Application Support', 'Code - Insiders', 'User', 'prompts');
+  } else { // linux / others posix
+    stable = path.join(home, '.config', 'Code', 'User', 'prompts');
+    insiders = path.join(home, '.config', 'Code - Insiders', 'User', 'prompts');
   }
-  // macOS
-  const macPath = path.join(home, 'Library', 'Application Support', 'Code', 'User', 'prompts');
-  if (process.platform === 'darwin') return macPath;
-  // Linux
-  return path.join(home, '.config', 'Code', 'User', 'prompts');
+  // On ne renvoie le chemin insiders que si le dossier racine de l'application existe (sans forcément "prompts").
+  const dirs: string[] = [stable];
+  const insidersRoot = path.dirname(path.dirname(insiders)); // .../Code - Insiders
+  try { fs.access(insidersRoot); dirs.push(insiders); } catch { /* ignore si n'existe pas */ }
+  return dirs;
 }
-const GLOBAL_CHATMODE_FILE = path.join(getUserPromptsDir(), 'VIBE+.chatmode.md');
-const GLOBAL_RETRODOC_CHATMODE_FILE = path.join(getUserPromptsDir(), 'RETRODOC+.chatmode.md');
+// Fichiers cibles (stable + potentiellement insiders)
+const GLOBAL_CHATMODE_FILES = getUserPromptsDirs().map(d => path.join(d, 'VIBE+.chatmode.md'));
+const GLOBAL_RETRODOC_CHATMODE_FILES = getUserPromptsDirs().map(d => path.join(d, 'RETRODOC+.chatmode.md'));
+// Fichier principal (stable) pour ouverture / affichage.
+const PRIMARY_GLOBAL_CHATMODE_FILE = GLOBAL_CHATMODE_FILES[0];
+const PRIMARY_GLOBAL_RETRODOC_CHATMODE_FILE = GLOBAL_RETRODOC_CHATMODE_FILES[0];
 
 // Contenu système Vibe+ (doit rester aligné avec la source).
 // const VIBE_SYSTEM_PROMPT = `--- ... (supprimé temporairement)`;
@@ -58,38 +71,47 @@ async function writeChatModeFile(absFile: string, force: boolean) {
 }
 
 async function ensureVibeChatMode(force = false) {
-  // Création uniquement du fichier global utilisateur
-  try {
-    await writeChatModeFile(GLOBAL_CHATMODE_FILE, force);
-  } catch (e: any) {
-    vscode.window.showErrorMessage('Erreur création chat mode global Vibe+: ' + e.message);
+  // Création des fichiers (stable + insiders si présent)
+  for (const f of GLOBAL_CHATMODE_FILES) {
+    try {
+      await writeChatModeFile(f, force);
+    } catch (e: any) {
+      console.warn('Erreur création chat mode Vibe+ pour', f, e);
+    }
   }
 }
 
 async function ensureRetrodocChatMode(force = false) {
-  try {
-    const file = GLOBAL_RETRODOC_CHATMODE_FILE;
-    const dir = path.dirname(file);
-    await fs.mkdir(dir, { recursive: true });
-    let exists = false;
-    try { await fs.access(file); exists = true; } catch { /* */ }
-    if (exists && !force) {
-      try {
-        const current = await fs.readFile(file, 'utf8');
-        if (current.includes('RETRODOC+') && current.includes('<initial_interaction>')) return; // déjà présent
-      } catch { /* ignore */ }
+  for (const file of GLOBAL_RETRODOC_CHATMODE_FILES) {
+    try {
+      const dir = path.dirname(file);
+      await fs.mkdir(dir, { recursive: true });
+      let exists = false;
+      try { await fs.access(file); exists = true; } catch { /* */ }
+      if (exists && !force) {
+        try {
+          const current = await fs.readFile(file, 'utf8');
+          if (current.includes('RETRODOC+') && current.includes('<initial_interaction>')) continue; // déjà présent
+        } catch { /* ignore */ }
+      }
+      await fs.writeFile(file, RETRODOC_CHATMODE_FULL_CONTENT, 'utf8');
+    } catch (e: any) {
+      console.warn('Erreur création chat mode global RETRODOC+ pour', file, e);
     }
-    await fs.writeFile(file, RETRODOC_CHATMODE_FULL_CONTENT, 'utf8');
-  } catch (e: any) {
-    vscode.window.showErrorMessage('Erreur création chat mode global RETRODOC+: ' + e.message);
   }
 }
 
 async function openGlobalChatModeFile() {
   try {
     await ensureVibeChatMode();
-  await ensureRetrodocChatMode();
-    const doc = await vscode.workspace.openTextDocument(GLOBAL_CHATMODE_FILE);
+    await ensureRetrodocChatMode();
+    // Ouvre le fichier principal (stable). Si absent (improbable), tente le premier existant.
+    let target = PRIMARY_GLOBAL_CHATMODE_FILE;
+    try { await fs.access(target); } catch {
+      const fallback = GLOBAL_CHATMODE_FILES.find(async f => { try { await fs.access(f); return true; } catch { return false; } });
+      if (fallback) target = fallback as any;
+    }
+    const doc = await vscode.workspace.openTextDocument(target);
     await vscode.window.showTextDocument(doc, { preview: false });
   } catch (e:any) {
     vscode.window.showErrorMessage('Impossible d\'ouvrir le chatmode global: ' + e.message);
@@ -204,7 +226,7 @@ export function activate(context: vscode.ExtensionContext) {
   });
   const retroOpen = vscode.commands.registerCommand('retrodoc.openModeFile', async () => {
     await ensureRetrodocChatMode();
-    const doc = await vscode.workspace.openTextDocument(GLOBAL_RETRODOC_CHATMODE_FILE);
+  const doc = await vscode.workspace.openTextDocument(PRIMARY_GLOBAL_RETRODOC_CHATMODE_FILE);
     await vscode.window.showTextDocument(doc, { preview: false });
   });
   const retroRecreate = vscode.commands.registerCommand('retrodoc.recreateModeFile', async () => {
