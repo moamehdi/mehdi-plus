@@ -2,7 +2,7 @@
   "name": "ami-plus",
   "displayName": "[OW IT] AMI+",
   "description": "Crée les custom chat modes globaux VIBE+ (assistant dev sécurisé) et RETRODOC+ (rétro‑documentation) pour GitHub Copilot.",
-  "version": "2.0.18",
+  "version": "1.0.0",
   "publisher": "OWIT",
   "license": "MIT",
   "engines": {
